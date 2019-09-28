@@ -124,7 +124,20 @@ String sensor_unit[] ={
   "%",
   "hPa"
 };
-
+String sensor_icon[]{
+  "mdi:gas-cylinder",
+  "mdi:gas-cylinder",
+  "mdi:gas-cylinder",
+  "mdi:gas-cylinder",
+  "mdi:gas-cylinder",
+  "mdi:brightness-6",
+  "mdi:weather-sunny",
+  "mdi:chart-bubble",
+  "mdi:volume-high",
+  "mdi:thermometer",
+  "mdi:water-percent",
+  "mdi:gauge"
+};
 
 
 //https://arduinojson.org/v6/assistant/
@@ -138,7 +151,7 @@ void switchDiscovery(){
   doc["name"] = BOARDNAME;
   doc["cmd_t"] = "~cmnd/POWER";
   doc["stat_t"] = "~tele/STATE";
-  //doc["val_tpl"] = "{{value_json.POWER}}";
+  doc["val_tpl"] = "{{value}}";
   doc["pl_off"] = "OFF";
   doc["pl_on"] = "ON";
   doc["avty_t"] = "~tele/LWT";
@@ -205,16 +218,17 @@ void hassStatePublish(){
   client.publish(topic_buffer, payload_buffer, strlen(payload_buffer));
 }
 
-void sensorConfigDiscovery(String name, String unit){
+void sensorConfigDiscovery(String name, String unit, String icon){
   char topic_buffer[50], payload_buffer[1000];
   String uniqid = UUID + "_" + name;
   uniqid.replace(' ', '_');
-  const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(15);
+  const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(16);
   DynamicJsonDocument doc(capacity);
 
   doc["name"] = BOARDNAME + " " + name;
   doc["stat_t"] = "~" + name;
   doc["avty_t"] = "~LWT";
+  doc["val_tpl"] = "{{value}}";
   doc["pl_avail"] = "Online";
   doc["pl_not_avail"] = "Offline";
   doc["uniq_id"] = uniqid;
@@ -224,6 +238,7 @@ void sensorConfigDiscovery(String name, String unit){
   device_identifiers.add(UUID);
   doc["~"] = BOARDNAME + "/tele" + "/";
   doc["unit_of_meas"] = unit;
+  doc["icon"] = icon;
 
   serializeJson(doc, payload_buffer);
   sprintf(topic_buffer, "%s/%s/%s/%s", HOMEPREFIX.c_str(), "sensor", uniqid.c_str(), "config");
@@ -234,7 +249,7 @@ void setupDiscovery(){
   switchDiscovery();
   statusDiscovery();
   for(int i=0; i<sizeof(sensor_suffix)/sizeof(sensor_suffix[0]); i++){
-    sensorConfigDiscovery(sensor_suffix[i], sensor_unit[i]);
+    sensorConfigDiscovery(sensor_suffix[i], sensor_unit[i], sensor_icon[i]);
   }
 }
 
@@ -270,12 +285,10 @@ void reconnect() {
     String clientId = "ESP8266Client-";
     clientId += String(random(0xffff), HEX);
     // Attempt to connect
-    if (client.connect(clientId.c_str(), clientUsr, clientPw)) {
+    if (client.connect(clientId.c_str(), clientUsr, clientPw, (BOARDNAME + "/tele/LWT").c_str(), 0, 0, "Offline")) {
       Serial.println("connected");
       // Once connected, publish an announcement...
-      client.publish("outTopic", "hello world");
-      // ... and resubscribe
-      client.subscribe("inTopic");
+      client.publish((BOARDNAME + "/tele/LWT").c_str(), "Online");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
