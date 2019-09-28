@@ -157,7 +157,7 @@ void switchDiscovery(){
 
 void statusDiscovery(){
   char topic_buffer[50], payload_buffer[1000];
-  const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(5) + JSON_OBJECT_SIZE(11);
+  const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(5) + JSON_OBJECT_SIZE(20);
   DynamicJsonDocument doc(capacity);
 
   doc["name"] = BOARDNAME + " status";
@@ -180,7 +180,8 @@ void statusDiscovery(){
   doc["~"] = BOARDNAME + "/tele/";
 
   serializeJson(doc, payload_buffer);
-  strcpy(payload_buffer,"{\"name\":\"senbrd1 status\",\"stat_t\":\"~HASS_STATE\",\"avty_t\":\"~LWT\",\"pl_avail\":\"Online\",\"pl_not_avail\":\"Offline\",\"json_attributes_topic\":\"~HASS_STATE\",\"unit_of_meas\":\" \",\"val_tpl\":\"{{value_json['RSSI']}}\",\"uniq_id\":\"3998661_status\",\"device\":{\"identifiers\":[\"3998661\"],\"name\":\"senbrd1\",\"model\":\"DIY Sensorboard\"}}");
+  //strcpy(payload_buffer,"{\"name\":\"senbrd1 status\",\"stat_t\":\"~HASS_STATE\",\"avty_t\":\"~LWT\",\"pl_avail\":\"Online\",\"pl_not_avail\":\"Offline\",\"json_attributes_topic\":\"~HASS_STATE\",\"unit_of_meas\":\" \",\"val_tpl\":\"{{value_json['RSSI']}}\",\"uniq_id\":\"3998661_status\",\"device\":{\"identifiers\":[\"3998661\"],\"name\":\"senbrd1\",\"model\":\"DIY Sensorboard\"}}");
+  //strcpy(payload_buffer,"{\"name\":\"senbrd1 status\",\"pl_avail\":\"Online\",\"pl_not_avail\":\"Offline\",\"json_attributes_topic\":\"~HASS_STATE\",\"unit_of_meas\":\" \",\"val_tpl\":\"{{value_json['RSSI']}}\",\"uniq_id\":\"3998661_status\",\"device\":{\"identifiers\":[\"3998661\"],\"name\":\"senbrd1\",\"model\":\"DIY Sensorboard\"}}");
   sprintf(topic_buffer, "%s/%s/%s/%s", HOMEPREFIX.c_str(), "sensor", (UUID + "_status").c_str(), "config");
   Serial.println(topic_buffer);
   Serial.println(payload_buffer);
@@ -200,18 +201,18 @@ void hassStatePublish(){
   doc["RSSI"] = WiFi.RSSI();
 
   serializeJson(doc, payload_buffer);
-  sprintf(topic_buffer, "%s/%s/%s", HOMEPREFIX.c_str(), "tele", "HASS_STATE");
+  sprintf(topic_buffer, "%s/%s/%s", BOARDNAME.c_str(), "tele", "HASS_STATE");
   client.publish(topic_buffer, payload_buffer, strlen(payload_buffer));
 }
 
 void sensorConfigDiscovery(String name, String unit){
   char topic_buffer[50], payload_buffer[1000];
-  String uniqid = UUID + name;
+  String uniqid = UUID + "_" + name;
   uniqid.replace(' ', '_');
-  const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(10);
+  const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(15);
   DynamicJsonDocument doc(capacity);
 
-  doc["name"] = name;
+  doc["name"] = BOARDNAME + " " + name;
   doc["stat_t"] = "~" + name;
   doc["avty_t"] = "~LWT";
   doc["pl_avail"] = "Online";
@@ -221,11 +222,11 @@ void sensorConfigDiscovery(String name, String unit){
   JsonObject device = doc.createNestedObject("device");
   JsonArray device_identifiers = device.createNestedArray("identifiers");
   device_identifiers.add(UUID);
-  doc["~"] = BOARDNAME + "/tele/";
+  doc["~"] = BOARDNAME + "/tele" + "/";
   doc["unit_of_meas"] = unit;
 
   serializeJson(doc, payload_buffer);
-  sprintf(topic_buffer, "%s/%s/%s", HOMEPREFIX.c_str(), "sensor", uniqid.c_str(), "config");
+  sprintf(topic_buffer, "%s/%s/%s/%s", HOMEPREFIX.c_str(), "sensor", uniqid.c_str(), "config");
   client.publish(topic_buffer, payload_buffer, strlen(payload_buffer));
 }
 
