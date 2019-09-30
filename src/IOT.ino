@@ -263,10 +263,13 @@ void setup_wifi() {
   Serial.println(ssid);
 
   WiFi.begin(ssid, password);
-
+  int i=0;
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
+    i++;
+    if(i>100)
+      ESP.restart();
   }
 
   randomSeed(micros());
