@@ -210,7 +210,7 @@ void hassStatePublish(){
   doc["BuildDateTime"] = __TIME__;
   doc["Module"] = BOARDNAME;
   doc["Uptime"] = millis();
-  doc["IPAddress"] = WiFi.localIP();
+  doc["IPAddress"] = WiFi.localIP().toString();
   doc["RSSI"] = WiFi.RSSI();
 
   serializeJson(doc, payload_buffer);
