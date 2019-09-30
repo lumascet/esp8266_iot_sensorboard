@@ -144,7 +144,7 @@ String sensor_icon[]{
 
 void switchDiscovery(){
   char topic_buffer[50], payload_buffer[300];
-  const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(12);
+  const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(15);
   DynamicJsonDocument doc(capacity);
 
   doc["~"] = BOARDNAME + "/";
