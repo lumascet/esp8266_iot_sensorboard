@@ -1,11 +1,12 @@
 # Esp8266 IOT Sensorboard
-A IOT Device equipped with following key components: 
+A IOT Device with lots of sensors publishing acquired data via MQTT with automatic Home Assistant integration.
+The board is equipped with following key components: 
 
 * MQ Gas Sensors
     * MQ-3 Alcohol
-    * MQ-4 CH4, LPG+
+    * MQ-4 CH4, LPG
     * MQ-7 CO
-    * MQ-8 Hydrogen
+    * MQ-8 H2
     * MQ-135 Air-Quality
 * BME280 Barometric Pressure, Temperature & Humidity
 * GMYL8511 UV sensor
@@ -23,6 +24,7 @@ Supports ESP8266 Boards NodeMCU & WeMos D1 mini
 
 ![PCB](pictures/pcb.jpg)
 ![PCB](pictures/populated_pcb.jpg)
+![Homeassistant](pictures/homeassistant.png)
 
 # Installation # 
 
