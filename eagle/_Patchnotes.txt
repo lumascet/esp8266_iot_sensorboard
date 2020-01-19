@@ -1,0 +1,2 @@
+-Node MCU changed VIN to VV for 5V Rail
+-BME280 too close to gas sensors
