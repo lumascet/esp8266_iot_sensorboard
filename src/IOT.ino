@@ -67,11 +67,13 @@ bool ready = 0;
 
 /************************* WiFi Access Point *********************************/
 
-const char* ssid = "***REMOVED***";
-const char* password = "***REMOVED***";
-const char* mqtt_server = "***REMOVED***";
-const char* clientUsr = "***REMOVED***";
-const char* clientPw = "***REMOVED***";
+#include "credentials.h"
+
+const char* ssid = SSID;
+const char* password = PWD;
+const char* mqtt_server = MQTT_IP;
+const char* clientUsr = MQTT_USER;
+const char* clientPw = MQTT_PWD;
 WiFiClient espClient;
 PubSubClient client(espClient);
 long lastMsg = 0;
